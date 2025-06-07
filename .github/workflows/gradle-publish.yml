@@ -1,0 +1,61 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'maven-publish'
+}
+
+group = 'library'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'info.picocli:picocli:4.7.5'
+    implementation 'org.xerial:sqlite-jdbc:3.46.0.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+}
+
+application {
+    mainClass = 'library.LibraryApp'
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'library.LibraryApp'
+        )
+    }
+}
+
+// Task generujący dokumentację Javadoc
+task generateJavadoc(type: Javadoc) {
+    source = sourceSets.main.allJava
+    classpath = configurations.compileClasspath
+    options.encoding = 'UTF-8'
+    options.memberLevel = JavadocMemberLevel.PROTECTED
+    options.author = true
+    options.version = true
+    options.links("https://docs.oracle.com/en/java/javase/17/docs/api/")
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact generateJavadoc.destinationDir != null ? generateJavadoc.destinationDir : null
+        }
+    }
+    repositories {
+        maven {
+            name = "github"
+            url = uri("https://maven.pkg.github.com/krzysztofbaszak/vizja-programowanie")
+            credentials {
+                username = System.getenv("USERNAME") ?: ""
+                password = System.getenv("TOKEN") ?: ""
+            }
+        }
+    }
+}
