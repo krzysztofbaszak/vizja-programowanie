@@ -41,11 +41,17 @@ task generateJavadoc(type: Javadoc) {
     options.links("https://docs.oracle.com/en/java/javase/17/docs/api/")
 }
 
+// Opcjonalnie: wymuś generowanie javadoc podczas builda
+build.dependsOn(generateJavadoc)
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-            artifact generateJavadoc.destinationDir != null ? generateJavadoc.destinationDir : null
+            // Dołącz Javadoc jako osobny artefakt
+            artifact(generateJavadoc) {
+                classifier = 'javadoc'
+            }
         }
     }
     repositories {
