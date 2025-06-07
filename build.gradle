@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group = 'library'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+    gradlePluginPortal()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+dependencies {
+    implementation 'info.picocli:picocli:4.7.5'
+    implementation 'org.xerial:sqlite-jdbc:3.46.0.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    implementation 'org.slf4j:slf4j-simple:2.0.9'
+}
+
+application {
+    mainClass = 'library.LibraryApp'
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'library.LibraryApp'
+        )
+    }
+}
+
+tasks.javadoc {
+    options.encoding = 'UTF-8'
+    options.memberLevel = JavadocMemberLevel.PUBLIC
+    options.author = true
+    options.version = true
+}
